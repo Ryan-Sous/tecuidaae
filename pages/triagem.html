@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Triagem de Sintomas - TeCuidaAÊ</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .triagem-container {
+            background: var(--white);
+            width: 100%;
+            max-width: 600px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .triagem-header {
+            background: linear-gradient(135deg, var(--primary) 0%, #14919b 100%);
+            color: var(--white);
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--white);
+            text-decoration: none;
+            font-size: 1.5rem;
+        }
+
+        .triagem-header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .triagem-header p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(255,255,255,0.3);
+            margin-top: 1.5rem;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--secondary);
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .question-container {
+            padding: 2rem;
+            min-height: 400px;
+        }
+
+        .question {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .question.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .question-number {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            color: var(--dark);
+            margin-bottom: 2rem;
+            line-height: 1.4;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .option-btn {
+            background: var(--light);
+            border: 2px solid transparent;
+            padding: 1.2rem;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 1rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            min-height: 60px;
+            width: 100%;
+        }
+
+        .option-btn:hover {
+            border-color: var(--primary);
+            background: #e0f2f1;
+            transform: translateX(5px);
+        }
+
+        .option-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 2rem 2rem;
+            gap: 1rem;
+        }
+
+        .nav-btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 24px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            min-height: 48px;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .nav-btn.prev {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .nav-btn.next {
+            background: var(--primary);
+            color: var(--white);
+            flex: 1;
+        }
+
+        .nav-btn.next:hover:not(:disabled) {
+            background: #14919b;
+        }
+
+        /* Resultados */
+        .result-container {
+            display: none;
+            padding: 2rem;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .result-icon {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto 1.5rem;
+        }
+
+        .result-baixo .result-icon { background: #e8f5e9; color: var(--success); }
+        .result-moderado .result-icon { background: #fff3e0; color: var(--warning); }
+        .result-alto .result-icon { background: #ffebee; color: var(--accent); }
+
+        .result-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .result-baixo .result-title { color: var(--success); }
+        .result-moderado .result-title { color: var(--warning); }
+        .result-alto .result-title { color: var(--accent); }
+
+        .result-text {
+            color: #666;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .action-cards {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .action-card {
+            background: var(--light);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: left;
+        }
+
+        .action-card h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-action {
+            display: inline-block;
+            background: var(--primary);
+            color: var(--white);
+            padding: 1rem 2rem;
+            border-radius: 24px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 1rem;
+            transition: all 0.3s;
+            min-height: 48px;
+        }
+
+        .btn-action:hover {
+            background: #14919b;
+            transform: translateY(-2px);
+        }
+
+        .disclaimer {
+            background: #fff3e0;
+            border-left: 4px solid var(--warning);
+            padding: 1rem;
+            margin-top: 2rem;
+            font-size: 0.85rem;
+            color: #666;
+            text-align: left;
+            border-radius: 0 8px 8px 0;
+        }
+
+        @media (max-width: 480px) {
+            .question-text { font-size: 1.1rem; }
+            .option-btn { padding: 1rem; }
+            .triagem-header { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="triagem-container">
+        <div class="triagem-header">
+            <a href="../index.html" class="back-btn">←</a>
+            <h1>🩺 Triagem de Risco</h1>
+            <p>Avalie seu risco para sífilis em 5 perguntas rápidas</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+        </div>
+
+        <div id="quizContainer">
+            <!-- Pergunta 1 -->
+            <div class="question active" data-step="1">
+                <span class="question-number">PERGUNTA 1 DE 5</span>
+                <h2 class="question-text">Você tem ou teve alguma ferida, úlcera ou bolha nos genitais, ânus ou boca?</h2>
+                <div class="options">
+                    <button class="option-btn" onclick="answer(1, 'sim')">
+                        <span class="option-icon">😟</span>
+                        <span>Sim, atualmente</span>
+                    </button>
+                    <button class="option-btn" onclick="answer(1, 'ja')">
+                        <span class="option-icon">😔</span>
+                        <span>Já tive, mas sumiu</span>
+                    </button>
+                    <button class="option-btn" onclick="answer(1, 'nao')">
+                        <span class="option-icon">😊</span>
+                        <span>Não, nunca tive</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Pergunta 2 -->
+            <div class="question" data-step="2">
+                <span class="question-number">PERGUNTA 2 DE 5</span>
+                <h2 class="question-text">Você tem manchas vermelhas ou rosadas na pele, especialmente nas palmas das mãos ou solas dos pés?</h2>
+                <div class="options">
+                    <button class="option-btn" onclick="answer(2, 'sim')">
+                        <span class="option-icon">👋</span>
+                        <span>Sim, tenho essas manchas</span>
+                    </button>
+                    <button class="option-btn" onclick="answer(2, 'nao')">
+                        <span class="option-icon">✋</span>
+                        <span>Não tenho manchas</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Pergunta 3 -->
+            <div class="question" data-step="3">
+                <span class="question-number">PERGUNTA 3 DE 5</span>
+                <h2 class="question-text">Você teve relação sexual desprotegida (sem camisinha) nos últimos 3 meses?</h2>
+                <div class="options">
+                    <button class="option-btn" onclick="answer(3, 'sim')">
+                        <span class="option-icon">⚠️</span>
+                        <span>Sim, recentemente</span>
+                    </button>
+                    <button class="option-btn" onclick="answer(3, 'nao')">
+                        <span class="option-icon">✅</span>
+                        <span>Não, sempre protegido</span>
+                    </button>
+                    <button class="option-btn" onclick="answer(3, 'nao_lembro')">
+                        <span class="option-icon">🤔</span>
+                        <span>Não tenho certeza</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Pergunta 4 -->
+            <div class="question" data-step="4">
+                <span class="question-number">PERGUNTA 4 DE 5</span>
+                <h2 class="question-text">Você está grávida ou tentando engravidar?</h2>
+                <div class="options">
+                    <button class="option-btn" onclick="answer(4, 'sim')">
+                        <span class="option-icon">🤰</span>
+                        <span>Sim, estou grávida</span>
+                    </button>
+                    <button class="option-btn" onclick="answer(4, 'tentando')">
+                        <span class="option-icon">👶</span>
+                        <span>Estou tentando engravidar</span>
+                    </button>
+                    <button class="option-btn" onclick="answer(4, 'nao')">
+                        <span class="option-icon">🚫</span>
+                        <span>Não</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Pergunta 5 -->
+            <div class="question" data-step="5">
+                <span class="question-number">PERGUNTA 5 DE 5</span>
+                <h2 class="question-text">Seu parceiro(a) foi diagnosticado com sífilis ou outra IST recentemente?</h2>
+                <div class="options">
+                    <button class="option-btn" onclick="answer(5, 'sim')">
+                        <span class="option-icon">😰</span>
+                        <span>Sim</span>
+                    </button>
+                    <button class="option-btn" onclick="answer(5, 'nao')">
+                        <span class="option-icon">👍</span>
+                        <span>Não</span>
+                    </button>
+                    <button class="option-btn" onclick="answer(5, 'nao_sei')">
+                        <span class="option-icon">❓</span>
+                        <span>Não sei</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="navigation">
+                <button class="nav-btn prev" onclick="prevQuestion()" id="prevBtn" disabled>Voltar</button>
+                <button class="nav-btn next" onclick="nextQuestion()" id="nextBtn" disabled>Próxima</button>
+            </div>
+        </div>
+
+        <!-- Resultados -->
+        <div class="result-container" id="resultContainer"></div>
+    </div>
+
+    <script src="../js/triagem.js"></script>
+</body>
+</html>

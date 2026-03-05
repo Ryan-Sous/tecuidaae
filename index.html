@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TeCuidaAÊ - Cuidando da sua saúde em Manaus</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="nav container">
+            <div class="logo">
+                <div class="logo-icon">🏥</div>
+                <span>TeCuidaAÊ</span>
+            </div>
+            <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html">Início</a></li>
+                <li><a href="pages/chatbot.html">Chatbot</a></li>
+                <li><a href="pages/mapa.html">UBSs</a></li>
+                <li><a href="pages/conteudos.html">Conteúdos</a></li>
+                <li><a href="pages/triagem.html">Triagem</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="container hero-content">
+            <h1>Cuidando da sua saúde em Manaus</h1>
+            <p>Informações confiáveis sobre sífilis, localização de UBSs e triagem de sintomas com base nos protocolos do Ministério da Saúde.</p>
+            <div class="cta-buttons">
+                <a href="pages/triagem.html" class="btn btn-primary">🩺 Fazer Triagem</a>
+                <a href="pages/chatbot.html" class="btn btn-secondary">💬 Falar com Especialista</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <div class="emergency-banner">
+            <span style="font-size: 2rem;">🚨</span>
+            <div>
+                <strong>Em caso de emergência:</strong>
+                Procure imediatamente a UBS mais próxima ou ligue 192 (SAMU)
+            </div>
+        </div>
+
+        <section class="features">
+            <h2 class="section-title">Como podemos te ajudar?</h2>
+            <div class="features-grid">
+                <a href="pages/chatbot.html" class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>Chatbot Especializado</h3>
+                    <p>Tire dúvidas sobre sífilis, transmissão, sintomas e prevenção com nosso assistente virtual disponível 24h.</p>
+                </a>
+                <a href="pages/mapa.html" class="feature-card">
+                    <div class="feature-icon">📍</div>
+                    <h3>Encontre UBSs</h3>
+                    <p>Localize unidades de saúde em Manaus que realizam atendimento para ISTs com informações atualizadas.</p>
+                </a>
+                <a href="pages/conteudos.html" class="feature-card">
+                    <div class="feature-icon">📚</div>
+                    <h3>Conteúdo Validado</h3>
+                    <p>Artigos revisados por infectologistas sobre sífilis, tratamento e cuidados durante a gravidez.</p>
+                </a>
+                <a href="pages/triagem.html" class="feature-card">
+                    <div class="feature-icon">✅</div>
+                    <h3>Triagem Rápida</h3>
+                    <p>Avalie seu risco em minutos com nosso questionário interativo e receba orientações personalizadas.</p>
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-section">
+                <h4>TeCuidaAÊ</h4>
+                <p>Plataforma de apoio à saúde pública de Manaus focada na prevenção e tratamento da sífilis.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Links Úteis</h4>
+                <a href="https://www.gov.br/saude/pt-br" target="_blank">Ministério da Saúde</a><br>
+                <a href="https://www.fvs.am.gov.br/" target="_blank">FVS-AM</a><br>
+                <a href="https://www.who.int/" target="_blank">OMS</a>
+            </div>
+            <div class="footer-section">
+                <h4>Contato</h4>
+                <p>Suporte técnico 24/7<br>contato@tecuidaae.manaus.am.gov.br</p>
+            </div>
+        </div>
+        <div class="container footer-bottom">
+            <p>&copy; 2024 TeCuidaAÊ - Prefeitura de Manaus. Todos os direitos reservados.</p>
+            <p style="font-size: 0.8rem; margin-top: 0.5rem;">Fontes: Protocolo Clínico MS 2022 | Diretrizes OMS 2021 | FVS-AM</p>
+        </div>
+    </footer>
+
+    <div class="accessibility-bar">
+        <button class="accessibility-btn" onclick="changeFontSize(2)" title="Aumentar fonte">A+</button>
+        <button class="accessibility-btn" onclick="changeFontSize(-2)" title="Diminuir fonte">A-</button>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            document.getElementById('navLinks').classList.toggle('active');
+        }
+
+        let currentFontSize = 16;
+        function changeFontSize(delta) {
+            currentFontSize = Math.max(12, Math.min(24, currentFontSize + delta));
+            document.documentElement.style.fontSize = currentFontSize + 'px';
+        }
+    </script>
+</body>
+</html>

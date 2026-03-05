@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa de UBSs - TeCuidaAÊ</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        body {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .map-header {
+            background: var(--primary);
+            color: var(--white);
+            padding: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .back-btn {
+            color: var(--white);
+            text-decoration: none;
+            font-size: 1.2rem;
+            margin-right: 1rem;
+        }
+
+        .filters {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: rgba(255,255,255,0.2);
+            color: var(--white);
+            border: 2px solid transparent;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            min-height: 40px;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--secondary);
+            color: var(--primary);
+            border-color: var(--secondary);
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 350px;
+            background: var(--white);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            z-index: 500;
+            transition: transform 0.3s;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--primary), #14919b);
+            color: var(--white);
+        }
+
+        .search-box {
+            position: relative;
+            margin-top: 1rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.8rem 2.5rem 0.8rem 1rem;
+            border: none;
+            border-radius: 24px;
+            font-size: 1rem;
+            background: rgba(255,255,255,0.9);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+        }
+
+        .ubs-list {
+            padding: 1rem;
+        }
+
+        .ubs-card {
+            background: var(--white);
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ubs-card:hover, .ubs-card.active {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(13, 115, 119, 0.15);
+            transform: translateX(5px);
+        }
+
+        .ubs-card.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--primary);
+        }
+
+        .ubs-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 0.5rem;
+        }
+
+        .ubs-name {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.1rem;
+            line-height: 1.3;
+        }
+
+        .ubs-distance {
+            background: var(--secondary);
+            color: var(--primary);
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .ubs-info {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .ubs-tags {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: #e0f2f1;
+            color: var(--primary);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+
+        .tag.urgent {
+            background: #ffebee;
+            color: var(--accent);
+        }
+
+        .map-container {
+            flex: 1;
+            position: relative;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        .map-controls {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            z-index: 400;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .map-btn {
+            width: 40px;
+            height: 40px;
+            background: var(--white);
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .map-btn:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .legend {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            background: var(--white);
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            z-index: 400;
+            font-size: 0.9rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .legend-icon {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .mobile-toggle {
+            display: none;
+            position: absolute;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 600;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 24px;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100%;
+                transform: translateX(-100%);
+                width: 85%;
+                max-width: 350px;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+
+            .filters {
+                display: none;
+            }
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4CAF50;
+        }
+
+        .status-dot.closed {
+            background: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <header class="map-header">
+        <div class="header-content">
+            <div style="display: flex; align-items: center;">
+                <a href="../index.html" class="back-btn">←</a>
+                <div>
+                    <div style="font-weight: bold; font-size: 1.2rem;">📍 UBSs de Manaus</div>
+                    <div style="font-size: 0.85rem; opacity: 0.9;">Encontre atendimento para ISTs/sífilis</div>
+                </div>
+            </div>
+            <div class="filters">
+                <button class="filter-btn active" onclick="filterRegion('all')">Todas</button>
+                <button class="filter-btn" onclick="filterRegion('norte')">Zona Norte</button>
+                <button class="filter-btn" onclick="filterRegion('sul')">Zona Sul</button>
+                <button class="filter-btn" onclick="filterRegion('leste')">Zona Leste</button>
+                <button class="filter-btn" onclick="filterRegion('oeste')">Zona Oeste</button>
+                <button class="filter-btn" onclick="filterRegion('centro')">Centro</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-content">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h3>🏥 Unidades de Saúde</h3>
+                <p style="font-size: 0.9rem; opacity: 0.9; margin-top: 0.5rem;">Clique em uma UBS para ver detalhes</p>
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="Buscar UBS por nome ou bairro..." id="searchInput">
+                    <span class="search-icon">🔍</span>
+                </div>
+            </div>
+            <div class="ubs-list" id="ubsList"></div>
+        </aside>
+
+        <main class="map-container">
+            <div id="map"></div>
+            
+            <div class="map-controls">
+                <button class="map-btn" onclick="locateUser()" title="Minha localização">📍</button>
+                <button class="map-btn" onclick="map.zoomIn()" title="Zoom in">+</button>
+                <button class="map-btn" onclick="map.zoomOut()" title="Zoom out">−</button>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-icon" style="background: #0D7377;"></div>
+                    <span>Atendimento IST/Sífilis</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-icon" style="background: #FF6B6B;"></div>
+                    <span>Alta demanda/Estoque crítico</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-icon" style="background: #4CAF50;"></div>
+                    <span>Aberto agora</span>
+                </div>
+            </div>
+
+            <button class="mobile-toggle" onclick="toggleSidebar()">📋 Ver Lista</button>
+        </main>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="../js/mapa.js"></script>
+</body>
+</html>

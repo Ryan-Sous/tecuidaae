@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conteúdos Educativos - TeCuidaAÊ</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, #14919b 100%);
+            color: var(--white);
+            padding: 2rem 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--white);
+            text-decoration: none;
+            font-size: 1.5rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-section {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin: 2rem 0;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+        }
+
+        .category-filters {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .cat-btn {
+            padding: 0.8rem 1.2rem;
+            border: 2px solid var(--primary);
+            background: transparent;
+            color: var(--primary);
+            border-radius: 24px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            min-height: 48px;
+        }
+
+        .cat-btn:hover, .cat-btn.active {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .article-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        .article-image {
+            height: 200px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            position: relative;
+        }
+
+        .article-category {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: rgba(255,255,255,0.95);
+            padding: 0.3rem 0.8rem;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .article-content {
+            padding: 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .article-title {
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .article-excerpt {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            flex: 1;
+        }
+
+        .article-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .source-footer {
+            background: #e0f2f1;
+            padding: 0.8rem 1.5rem;
+            font-size: 0.75rem;
+            color: var(--primary);
+            font-style: italic;
+            border-top: 1px solid #b2dfdb;
+        }
+
+        .featured-article {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            background: var(--white);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .featured-image {
+            min-height: 300px;
+            background: linear-gradient(135deg, #ff6b6b, #ffa726);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 6rem;
+        }
+
+        .featured-content {
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .featured-tag {
+            background: var(--accent);
+            color: var(--white);
+            padding: 0.3rem 1rem;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: inline-block;
+            width: fit-content;
+            margin-bottom: 1rem;
+        }
+
+        .featured-title {
+            font-size: 2rem;
+            color: var(--dark);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .featured-text {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .articles-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .featured-article {
+                grid-template-columns: 1fr;
+            }
+            
+            .featured-content {
+                padding: 1.5rem;
+            }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background: var(--white);
+            max-width: 800px;
+            margin: 2rem auto;
+            border-radius: var(--radius);
+            position: relative;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            background: var(--primary);
+            color: var(--white);
+            padding: 2rem;
+            border-radius: var(--radius) var(--radius) 0 0;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: var(--white);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-body h2 {
+            color: var(--primary);
+            margin: 1.5rem 0 0.5rem;
+        }
+
+        .modal-body p {
+            margin-bottom: 1rem;
+            line-height: 1.8;
+        }
+
+        .infographic {
+            background: #f5f5f5;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+
+        .references {
+            background: #e0f2f1;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .references h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html" class="back-btn">←</a>
+        <h1>📚 Biblioteca de Saúde</h1>
+        <p>Artigos validados por infectologistas sobre sífilis, prevenção e tratamento. Informações baseadas nos protocolos do Ministério da Saúde e OMS.</p>
+    </header>
+
+    <div class="container">
+        <div class="search-section">
+            <input type="text" class="search-input" placeholder="Buscar artigos (ex: sintomas, tratamento, gravidez...)" id="searchInput">
+            <div class="category-filters">
+                <button class="cat-btn active" onclick="filterCategory('all')">Todos</button>
+                <button class="cat-btn" onclick="filterCategory('prevencao')">Prevenção</button>
+                <button class="cat-btn" onclick="filterCategory('tratamento')">Tratamento</button>
+                <button class="cat-btn" onclick="filterCategory('gravidez')">Gravidez</button>
+                <button class="cat-btn" onclick="filterCategory('mitos')">Mitos</button>
+            </div>
+        </div>
+
+        <div class="articles-grid" id="articlesGrid">
+            <!-- Artigo em Destaque -->
+            <article class="featured-article" onclick="openArticle(0)">
+                <div class="featured-image">🤰</div>
+                <div class="featured-content">
+                    <span class="featured-tag">DESTAQUE</span>
+                    <h2 class="featured-title">Sífilis na Gravidez: Protegendo Mães e Bebês</h2>
+                    <p class="featured-text">A detecção precoce e o tratamento adequado durante o pré-natal são essenciais para prevenir a transmissão vertical da sífilis. Saiba como proteger seu bebê.</p>
+                    <span style="color: var(--primary); font-weight: 600;">Ler artigo completo →</span>
+                </div>
+            </article>
+
+            <!-- Artigos serão inseridos via JS -->
+        </div>
+    </div>
+
+    <div class="modal" id="articleModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="modal-close" onclick="closeModal()">×</button>
+                <h2 id="modalTitle">Título do Artigo</h2>
+                <p id="modalCategory">Categoria</p>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        const articles = [
+            {
+                id: 1,
+                title: "O que é Sífilis? Entendendo a Doença",
+                category: "basico",
+                categoryLabel: "Conceitos Básicos",
+                icon: "🔬",
+                excerpt: "A sífilis é uma infecção causada pela bactéria Treponema pallidum. Conheça suas fases, sintomas e como ela afeta o organismo ao longo do tempo.",
+                readTime: "5 min",
+                content: `
+                    <p>A sífilis é uma Infecção Sexualmente Transmissível (IST) causada pela bactéria <em>Treponema pallidum</em>. É uma doença sistêmica, ou seja, pode afetar várias partes do corpo se não for tratada adequadamente.</p>
+                    
+                    <h2>Fases da Sífilis</h2>
+                    <p><strong>1. Sífilis Primária:</strong> Caracteriza-se pelo aparecimento de uma lesão chamada "cancro" ou "chuancro", geralmente indolor, nos genitais, ânus ou boca. Aparece em média 21 dias após a contaminação.</p>
+                    
+                    <p><strong>2. Sífilis Secundária:</strong> Se não tratada, a doença evolui com manchas na pele, febre, mal-estar geral, queda de cabelo e lesões em mucosas. Pode ser confundida com outras doenças.</p>
+                    
+                    <p><strong>3. Sífilis Latente:</strong> Período sem sintomas aparentes, mas a bactéria permanece no organismo causando danos internos.</p>
+                    
+                    <p><strong>4. Sífilis Terciária:</strong> Fase mais grave, com comprometimento de órgãos como coração, cérebro, ossos e pele.</p>
+                    
+                    <div class="infographic">
+                        <div style="font-size: 3rem;">📊</div>
+                        <p><strong>Infográfico:</strong> Evolução temporal da sífilis sem tratamento</p>
+                        <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">Dias 0-90: Primária | Dias 90-365: Secundária | Após 1 ano: Latente/Terciária</p>
+                    </div>
+                `,
+                references: "Protocolo Clínico e Diretrizes Terapêuticas para Atenção Integral às Pessoas com ISTs. Ministério da Saúde, 2022."
+            },
+            {
+                id: 2,
+                title: "Como se Proteger da Sífilis",
+                category: "prevencao",
+                categoryLabel: "Prevenção",
+                icon: "🛡️",
+                excerpt: "Prevenir a sífilis é simples e eficaz. Conheça os métodos de proteção, importância do uso de preservativos e dos testes regulares.",
+                readTime: "4 min",
+                content: `
+                    <p>A prevenção da sífilis é fundamental para o controle da doença. Veja as principais medidas de proteção:</p>
+                    
+                    <h2>Uso Consistente de Preservativos</h2>
+                    <p>O uso correto da camisinha (masculina ou feminina) em todas as relações sexuais (vaginais, anais e orais) é a forma mais eficaz de prevenir a transmissão da sífilis.</p>
+                    
+                    <h2>Testagem Regular</h2>
+                    <p>Pessoas com vida sexual ativa devem fazer testes para sífilis anualmente, ou mais frequentemente se tiverem múltiplos parceiros. O teste é rápido, gratuito e disponível no SUS.</p>
+                    
+                    <h2>Diálogo com Parceiros</h2>
+                    <p>Conversar abertamente sobre saúde sexual com parceiros é essencial. Se diagnosticado, informe seus parceiros para que também possam fazer o teste e, se necessário, o tratamento.</p>
+                    
+                    <div class="infographic">
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; text-align: center;">
+                            <div>
+                                <div style="font-size: 2rem;">🧪</div>
+                                <p style="font-size: 0.9rem; margin-top: 0.5rem;"><strong>Teste</strong><br>Anualmente</p>
+                            </div>
+                            <div>
+                                <div style="font-size: 2rem;">💬</div>
+                                <p style="font-size: 0.9rem; margin-top: 0.5rem;"><strong>Converse</strong><br>Com parceiros</p>
+                            </div>
+                            <div>
+                                <div style="font-size: 2rem;">🩺</div>
+                                <p style="font-size: 0.9rem; margin-top: 0.5rem;"><strong>Trate</strong><br>Se diagnosticado</p>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                references: "Diretrizes da Organização Mundial da Saúde (OMS) para o tratamento das ISTs, 2021."
+            },
+            {
+                id: 3,
+                title: "Tratamento Passo a Passo",
+                category: "tratamento",
+                categoryLabel: "Tratamento",
+                icon: "💉",
+                excerpt: "O tratamento da sífilis é simples, gratuito e altamente eficaz. Entenda como funciona o tratamento com penicilina benzatina.",
+                readTime: "6 min",
+                content: `
+                    <p>O tratamento da sífilis é feito com <strong>penicilina benzatina</strong> benzatina, administrada por via intramuscular, de forma gratuita em todas as unidades de saúde do SUS.</p>
+                    
+                    <h2>Esquema de Tratamento</h2>
+                    <p><strong>Sífilis primária, secundária ou latente recente:</strong> Uma dose única de 2,4 milhões de unidades de penicilina benzatina.</p>
+                    
+                    <p><strong>Sífilis latente tardia ou terciária:</strong> Três doses de 2,4 milhões de unidades, com intervalo de 7 dias entre cada aplicação.</p>
+                    
+                    <h2>Importante</h2>
+                    <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+                        <li>O tratamento deve ser completado mesmo que os sintomas desapareçam</li>
+                        <li>Todos os parceiros sexuais dos últimos 3 meses devem ser tratados</li>
+                        <li>Abstinência sexual ou uso de preservativo até a cura completa</li>
+                        <li>Retorno para teste de controle após 6 meses</li>
+                    </ul>
+                    
+                    <div class="infographic">
+                        <p style="font-size: 1.2rem; margin-bottom: 1rem;"><strong>Fluxo do Tratamento</strong></p>
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; flex-wrap: wrap;">
+                            <span style="background: var(--primary); color: white; padding: 0.5rem 1rem; border-radius: 20px;">Diagnóstico</span>
+                            <span>→</span>
+                            <span style="background: var(--primary); color: white; padding: 0.5rem 1rem; border-radius: 20px;">Aplicação</span>
+                            <span>→</span>
+                            <span style="background: var(--primary); color: white; padding: 0.5rem 1rem; border-radius: 20px;">Parceiros</span>
+                            <span>→</span>
+                            <span style="background: var(--primary); color: white; padding: 0.5rem 1rem; border-radius: 20px;">Cura</span>
+                        </div>
+                    </div>
+                `,
+                references: "Protocolo Clínico e Diretrizes Terapêuticas para Atenção Integral às Pessoas com ISTs. Ministério da Saúde, 2022."
+            },
+            {
+                id: 4,
+                title: "Mitos e Verdades sobre Sífilis",
+                category: "mitos",
+                categoryLabel: "Mitos vs Fatos",
+                icon: "❓",
+                excerpt: "Existem muitas informações incorretas sobre a sífilis. Separamos os principais mitos e as verdades científicas sobre a doença.",
+                readTime: "5 min",
+                content: `
+                    <h2>Mito 1: "Sífilis tem cura?"</h2>
+                    <p><strong>VERDADE:</strong> Sim! A sífilis tem cura quando tratada adequadamente com penicilina benzatina. O tratamento é gratuito e disponível no SUS.</p>
+                    
+                    <h2>Mito 2: "Só pega sífilis quem tem muitos parceiros"</h2>
+                    <p><strong>VERDADE:</strong> Basta uma relação sexual desprotegida com uma pessoa infectada para contrair a doença. A quantidade de parceiros não determina o risco.</p>
+                    
+                    <h2>Mito 3: "Se não tiver sintomas, não precisa tratar"</h2>
+                    <p><strong>VERDADE:</strong> A fase latente da sífilis não apresenta sintomas, mas a bactéria continua causando danos graves ao organismo e pode ser transmitida.</p>
+                    
+                    <h2>Mito 4: "Banheiro público transmite sífilis"</h2>
+                    <p><strong>VERDADE:</strong> Não. A sífilis é transmitida principalmente por relação sexual desprotegida, transmissão vertical (mãe para filho) ou contato direto com lesões (raro).</p>
+                    
+                    <div class="infographic" style="background: #fff3e0;">
+                        <p style="font-size: 1.1rem; color: #e65100;"><strong>⚠️ Lembre-se:</strong></p>
+                 
